@@ -1,41 +1,41 @@
 package com.example.prayerbox.models
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
-import com.example.prayerbox.data.CreatePrayerScreenEvents
-import com.example.prayerbox.data.CreatePrayerScreenState
 
-class CreatePrayerScreenViewModel:ViewModel() {
+class CreatePrayerScreenViewModel : ViewModel() {
 
-    var  uiState = mutableStateOf(CreatePrayerScreenState())
+    var title by mutableStateOf("")
 
-    fun onEvent(event:CreatePrayerScreenEvents){
-        when(event){
-            is CreatePrayerScreenEvents.TitleUpdated -> {
-                uiState.value = uiState.value.copy(
-                    title = event.title
-                )
-            }
+    var content by mutableStateOf("")
 
-            is CreatePrayerScreenEvents.ContentUpdated -> {
-                uiState.value = uiState.value.copy(
-                    content = event.content
-                )
-            }
 
-            is CreatePrayerScreenEvents.PrayerCreated -> {
-                uiState.value = uiState.value.copy(
-                    prayers = uiState.value.prayers.plus(event.prayer)
-                )
-            }
+    private val _prayers: SnapshotStateList<Prayer> = mutableStateListOf()
 
-            is CreatePrayerScreenEvents.PrayerDeleted -> {
-                uiState.value = uiState.value.copy(
-                    prayers = uiState.value.prayers.minus(event.prayer)
-                )
-            }
-        }
+    val prayers
+        get() = _prayers
+
+    fun remove(prayer: Prayer) {
+        _prayers.remove(prayer)
     }
+
+    fun add(prayer: Prayer) {
+        _prayers.add(prayer)
+        title = ""
+        content = ""
+    }
+
+    fun addEnabled(): Boolean {
+        /* TODO
+        *  Dont allow two prayers with same title
+        * */
+        return title.isNotEmpty() && content.isNotEmpty()
+    }
+
 }
 
 
