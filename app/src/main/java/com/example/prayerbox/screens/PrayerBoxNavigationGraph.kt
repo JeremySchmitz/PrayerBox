@@ -6,17 +6,25 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.prayerbox.models.CreatePrayerScreenViewModel
+import com.example.prayerbox.models.DrawPrayerScreenViewModel
 
 @Composable
-fun PrayerBoxNavigationGraph(createPrayerViewModel: CreatePrayerScreenViewModel = viewModel()){
+fun PrayerBoxNavigationGraph(
+    createPrayerViewModel: CreatePrayerScreenViewModel = viewModel(),
+    drawPrayerScreenViewModel: DrawPrayerScreenViewModel = viewModel()
+) {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Routes.CREATE_PRAYER_SCREEN ) {
-        composable(Routes.HOME_SCREEN){
+    NavHost(navController = navController, startDestination = Routes.DRAW_PRAYER_SCREEN) {
+        composable(Routes.HOME_SCREEN) {
             HomeScreen()
         }
 
-        composable(Routes.CREATE_PRAYER_SCREEN){
+        composable(Routes.CREATE_PRAYER_SCREEN) {
             CreatePrayerScreen(createPrayerViewModel)
+        }
+
+        composable(Routes.DRAW_PRAYER_SCREEN) {
+            DrawPrayerScreen(drawPrayerScreenViewModel)
         }
 
     }

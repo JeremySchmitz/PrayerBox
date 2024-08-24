@@ -74,6 +74,7 @@ fun CreatePrayerScreen(viewModel: CreatePrayerScreenViewModel) {
                         val newPrayer = Prayer(
                             viewModel.title,
                             viewModel.content,
+                            //TODO Update Date Creation
                             LocalDate.parse("2018-02-03")
                         )
                         viewModel.add(newPrayer)
@@ -93,7 +94,7 @@ fun CreatePrayerScreen(viewModel: CreatePrayerScreenViewModel) {
                 LazyRow {
                     items(viewModel.prayers) {
                         Box(modifier = Modifier.padding(8.dp)) {
-                            PrayerCard(prayer = it, canDelete = true, onDelete = {
+                            PrayerCard(prayer = it, onDelete = {
                                 viewModel.remove(it)
                             })
                         }
@@ -108,6 +109,7 @@ fun CreatePrayerScreen(viewModel: CreatePrayerScreenViewModel) {
             Row(modifier = Modifier.padding(horizontal = 8.dp)) {
                 Spacer(modifier = Modifier.weight(1F))
 
+                //TODO disable if no prayers entered
                 Button(onClick = {
                     println(" ------ submit button")
                     println(" ------ submit button " + viewModel.prayers.size)
@@ -127,12 +129,3 @@ fun CreatePrayerScreen(viewModel: CreatePrayerScreenViewModel) {
 fun CreatePrayerScreenPreview() {
     CreatePrayerScreen(viewModel())
 }
-
-
-//fun addEnabled(createPrayerViewModel: CreatePrayerScreenViewModel): Boolean {
-//    return createPrayerViewModel.uiState.value.title.isNotEmpty() && createPrayerViewModel.uiState.value.content.isNotEmpty()
-//}
-//
-//fun getState(createPrayerViewModel: CreatePrayerScreenViewModel): CreatePrayerScreenState {
-//    return createPrayerViewModel.uiState.value
-//}
