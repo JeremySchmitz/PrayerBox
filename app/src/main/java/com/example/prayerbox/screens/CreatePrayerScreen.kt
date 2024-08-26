@@ -38,11 +38,8 @@ fun CreatePrayerScreen(viewModel: CreatePrayerScreenViewModel) {
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
     ) {
         Column {
-            Text(text = Routes.CREATE_PRAYER_SCREEN)
-
             Spacer(modifier = Modifier.size(16.dp))
 
             TextInput(

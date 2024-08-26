@@ -40,7 +40,6 @@ fun DrawPrayerScreen(viewModel: DrawPrayerScreenViewModel) {
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
     ) {
         var showAnswerDialog by remember { mutableStateOf(false) }
         var currentPrayer: Prayer? by remember { mutableStateOf(null) }
