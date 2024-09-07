@@ -110,6 +110,7 @@ fun CreatePrayerScreen(viewModel: CreatePrayerScreenViewModel) {
                 Button(onClick = {
                     println(" ------ submit button")
                     println(" ------ submit button " + viewModel.prayers.size)
+                    viewModel.submit()
                 }) {
                     Text(text = "Submit", fontWeight = FontWeight.Bold)
                     Icon(Icons.Default.Done, contentDescription = "Submit")

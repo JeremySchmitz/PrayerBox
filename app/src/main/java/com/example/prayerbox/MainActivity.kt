@@ -4,23 +4,48 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.room.Room
+import com.example.prayerbox.models.CreatePrayerScreenViewModel
+import com.example.prayerbox.models.database.PrayerDatabase
 import com.example.prayerbox.screens.PrayerBoxNavigationGraph
 import com.example.prayerbox.ui.theme.PrayerBoxTheme
 
 class MainActivity : ComponentActivity() {
+
+    private val db by lazy {
+        Room.databaseBuilder(
+            applicationContext,
+            PrayerDatabase::class.java,
+            "prayers.db"
+        ).build()
+    }
+
+    // TODO Updated with dependency Injection
+    private val createViewModel by viewModels<CreatePrayerScreenViewModel> (
+        factoryProducer = {
+            object: ViewModelProvider.Factory {
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return CreatePrayerScreenViewModel(db.dao) as T
+                }
+            }
+        }
+    )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             PrayerBoxTheme {
-                PrayerBoxApp()
+                PrayerBoxApp(createViewModel)
             }
         }
     }
 }
 
 @Composable
-fun PrayerBoxApp(){
-    PrayerBoxNavigationGraph()
+fun PrayerBoxApp(createViewModel: CreatePrayerScreenViewModel){
+    PrayerBoxNavigationGraph(createViewModel)
 }
