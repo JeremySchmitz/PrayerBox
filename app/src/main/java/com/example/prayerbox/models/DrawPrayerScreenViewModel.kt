@@ -5,13 +5,21 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.prayerbox.models.database.PrayerDao
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import java.time.LocalDate
 
-class DrawPrayerScreenViewModel : ViewModel() {
+class DrawPrayerScreenViewModel(private val dao: PrayerDao) : ViewModel() {
 
     val scrollState = LazyListState()
 
-    private val _availablePrayers: SnapshotStateList<Prayer> = dummyPrayers().toMutableStateList()
+    private val _unansweredPrayers =
+        dao.getUnansweredPrayers().stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+     //TODO Update so drawn prayers cannot be drawn again
+//    private var _availablePrayers: MutableStateFlow<List<Prayer>> = MutableStateFlow(emptyList<Prayer>())
+//    private val _availablePrayers: SnapshotStateList<Prayer> = dummyPrayers().toMutableStateList()
 
     private var _drawnPrayers: SnapshotStateList<Prayer> = mutableStateListOf()
     val drawnPrayers
@@ -32,17 +40,18 @@ class DrawPrayerScreenViewModel : ViewModel() {
         _answeredPrayers.add(updatedPrayer)
         _drawnPrayers.remove(prayer)
         _drawnPrayers.add(i, updatedPrayer)
-
     }
 
     suspend fun drawPrayer() {
-        if (_availablePrayers.isEmpty())
+        if (_unansweredPrayers.value.isEmpty())
             return
 
-        val drawn = _availablePrayers.random()
+        val drawn = _unansweredPrayers.value.random()
         _drawnPrayers.add(drawn)
-        _availablePrayers.remove(drawn)
+//        _availablePrayers.remove(drawn)
         scrollToEnd()
+
+
     }
 
     private suspend fun scrollToEnd() {

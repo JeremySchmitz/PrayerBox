@@ -10,8 +10,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import com.example.prayerbox.models.CreatePrayerScreenViewModel
+import com.example.prayerbox.models.DrawPrayerScreenViewModel
 import com.example.prayerbox.models.database.PrayerDatabase
 import com.example.prayerbox.screens.PrayerBoxNavigationGraph
+import com.example.prayerbox.screens.Screens
 import com.example.prayerbox.ui.theme.PrayerBoxTheme
 
 class MainActivity : ComponentActivity() {
@@ -25,27 +27,43 @@ class MainActivity : ComponentActivity() {
     }
 
     // TODO Updated with dependency Injection
-    private val createViewModel by viewModels<CreatePrayerScreenViewModel> (
+    private val createViewModel by viewModels<CreatePrayerScreenViewModel>(
         factoryProducer = {
-            object: ViewModelProvider.Factory {
+            object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
                     return CreatePrayerScreenViewModel(db.dao) as T
                 }
             }
         }
     )
+
+//    // TODO Updated with dependency Injection
+    private val drawViewModel by viewModels<DrawPrayerScreenViewModel>(
+        factoryProducer = {
+            object : ViewModelProvider.Factory {
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return DrawPrayerScreenViewModel(db.dao) as T
+                }
+            }
+        }
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             PrayerBoxTheme {
-                PrayerBoxApp(createViewModel)
+                PrayerBoxApp(createViewModel, drawViewModel)
             }
         }
     }
 }
 
 @Composable
-fun PrayerBoxApp(createViewModel: CreatePrayerScreenViewModel){
-    PrayerBoxNavigationGraph(createViewModel)
+fun PrayerBoxApp(
+    createViewModel: CreatePrayerScreenViewModel,
+    drawViewModel: DrawPrayerScreenViewModel
+) {
+    PrayerBoxNavigationGraph(createViewModel, drawViewModel)
+
 }

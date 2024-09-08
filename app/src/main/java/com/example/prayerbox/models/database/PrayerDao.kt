@@ -20,12 +20,11 @@ interface PrayerDao {
     suspend fun  deletePrayer(prayer: Prayer)
 
     @Query("SELECT * FROM prayer")
-
     fun getPrayers(): Flow<List<Prayer>>
 
     @Query("SELECT * FROM prayer WHERE dateAnswered IS NOT null")
     fun getAnsweredPrayers(): Flow<List<Prayer>>
 
     @Query("SELECT * FROM prayer WHERE dateAnswered IS null")
-    fun getUnAnsweredPrayers(): Flow<List<Prayer>>
+    fun getUnansweredPrayers(): Flow<List<Prayer>>
 }
