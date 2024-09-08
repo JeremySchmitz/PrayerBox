@@ -13,7 +13,6 @@ import com.example.prayerbox.models.CreatePrayerScreenViewModel
 import com.example.prayerbox.models.DrawPrayerScreenViewModel
 import com.example.prayerbox.models.database.PrayerDatabase
 import com.example.prayerbox.screens.PrayerBoxNavigationGraph
-import com.example.prayerbox.screens.Screens
 import com.example.prayerbox.ui.theme.PrayerBoxTheme
 
 class MainActivity : ComponentActivity() {
@@ -23,7 +22,10 @@ class MainActivity : ComponentActivity() {
             applicationContext,
             PrayerDatabase::class.java,
             "prayers.db"
-        ).build()
+        )
+//             NOTE: Leaving this here since Im not sure the Auto migration is set up
+//                .addMigrations(MIGRATION_1_2)
+            .build()
     }
 
     // TODO Updated with dependency Injection
@@ -37,7 +39,7 @@ class MainActivity : ComponentActivity() {
         }
     )
 
-//    // TODO Updated with dependency Injection
+//     TODO Updated with dependency Injection
     private val drawViewModel by viewModels<DrawPrayerScreenViewModel>(
         factoryProducer = {
             object : ViewModelProvider.Factory {
@@ -65,5 +67,4 @@ fun PrayerBoxApp(
     drawViewModel: DrawPrayerScreenViewModel
 ) {
     PrayerBoxNavigationGraph(createViewModel, drawViewModel)
-
 }

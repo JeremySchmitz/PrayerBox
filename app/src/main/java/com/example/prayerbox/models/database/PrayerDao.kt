@@ -17,10 +17,13 @@ interface PrayerDao {
     suspend fun upsertPrayer(prayer: Prayer)
 
     @Delete
-    suspend fun  deletePrayer(prayer: Prayer)
+    suspend fun deletePrayer(prayer: Prayer)
 
     @Query("SELECT * FROM prayer")
     fun getPrayers(): Flow<List<Prayer>>
+
+    @Query("SELECT * FROM prayer WHERE drawn IS 0")
+    fun getDrawablePrayers(): Flow<List<Prayer>>
 
     @Query("SELECT * FROM prayer WHERE dateAnswered IS NOT null")
     fun getAnsweredPrayers(): Flow<List<Prayer>>

@@ -12,6 +12,7 @@ data class Prayer(
     val name:String,
     val content:String,
     val dateCreated: LocalDate,
+    var drawn: Boolean = false,
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
 ) {

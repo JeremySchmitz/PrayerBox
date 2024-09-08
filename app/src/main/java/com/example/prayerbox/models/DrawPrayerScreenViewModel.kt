@@ -9,17 +9,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.prayerbox.models.database.PrayerDao
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 class DrawPrayerScreenViewModel(private val dao: PrayerDao) : ViewModel() {
 
     val scrollState = LazyListState()
 
-    private val _unansweredPrayers =
-        dao.getUnansweredPrayers().stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
-     //TODO Update so drawn prayers cannot be drawn again
-//    private var _availablePrayers: MutableStateFlow<List<Prayer>> = MutableStateFlow(emptyList<Prayer>())
-//    private val _availablePrayers: SnapshotStateList<Prayer> = dummyPrayers().toMutableStateList()
+    private val _drawablePrayers =
+        dao.getDrawablePrayers().stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     private var _drawnPrayers: SnapshotStateList<Prayer> = mutableStateListOf()
     val drawnPrayers
@@ -43,74 +41,21 @@ class DrawPrayerScreenViewModel(private val dao: PrayerDao) : ViewModel() {
     }
 
     suspend fun drawPrayer() {
-        if (_unansweredPrayers.value.isEmpty())
+        if (_drawablePrayers.value.isEmpty())
             return
 
-        val drawn = _unansweredPrayers.value.random()
+        val drawn = _drawablePrayers.value.random()
         _drawnPrayers.add(drawn)
-//        _availablePrayers.remove(drawn)
+
+        drawn.drawn = true;
+        viewModelScope.launch {
+            dao.upsertPrayer(drawn)
+        }
         scrollToEnd()
-
-
     }
 
     private suspend fun scrollToEnd() {
         scrollState.animateScrollToItem(_drawnPrayers.lastIndex)
     }
 
-}
-
-fun dummyPrayers(): List<Prayer> {
-    return listOf(
-        Prayer(
-            "Title 1",
-            "Content 1",
-            LocalDate.parse("2018-02-03")
-        ),
-        Prayer(
-            "Title 2",
-            "Content 2",
-            LocalDate.parse("2018-02-03")
-        ),
-        Prayer(
-            "Title 3",
-            "Content 3",
-            LocalDate.parse("2018-02-03")
-        ),
-        Prayer(
-            "Title 4",
-            "Content 4",
-            LocalDate.parse("2018-02-03")
-        ),
-        Prayer(
-            "Title 5",
-            "Content 5",
-            LocalDate.parse("2018-02-03")
-        ),
-        Prayer(
-            "Title 6",
-            "Content 6",
-            LocalDate.parse("2018-02-03")
-        ),
-        Prayer(
-            "Title 7",
-            "Content 7",
-            LocalDate.parse("2018-02-03")
-        ),
-        Prayer(
-            "Title 8",
-            "Content 8",
-            LocalDate.parse("2018-02-03")
-        ),
-        Prayer(
-            "Title 9",
-            "Content 9",
-            LocalDate.parse("2018-02-03")
-        ),
-        Prayer(
-            "Title 10",
-            "Content 10",
-            LocalDate.parse("2018-02-03")
-        ),
-    )
 }
