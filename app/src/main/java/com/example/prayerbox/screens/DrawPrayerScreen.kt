@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
@@ -27,7 +27,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.prayerbox.models.DrawPrayerScreenViewModel
-import com.example.prayerbox.models.Prayer
 import com.example.prayerbox.widgets.DateInput
 import com.example.prayerbox.widgets.InputDialog
 import com.example.prayerbox.widgets.PrayerCard
@@ -42,7 +41,7 @@ fun DrawPrayerScreen(viewModel: DrawPrayerScreenViewModel) {
             .fillMaxSize()
     ) {
         var showAnswerDialog by remember { mutableStateOf(false) }
-        var currentPrayer: Prayer? by remember { mutableStateOf(null) }
+        var currentPrayer: Int? by remember { mutableStateOf(null) }
         val coroutineScope = rememberCoroutineScope()
         val datePickerState = rememberDatePickerState()
 
@@ -98,10 +97,10 @@ fun DrawPrayerScreen(viewModel: DrawPrayerScreenViewModel) {
                 if (viewModel.drawnPrayers.isNotEmpty()) {
                     Box(modifier = Modifier.height(300.dp)) {
                         LazyRow(state = viewModel.scrollState) {
-                            items(viewModel.drawnPrayers) {
+                            itemsIndexed(viewModel.drawnPrayers) { index, item ->
                                 Box(modifier = Modifier.padding(8.dp)) {
-                                    PrayerCard(prayer = it, onAnswered = {
-                                        currentPrayer = it
+                                    PrayerCard(prayer = item, onAnswered = {
+                                        currentPrayer = index
                                         showAnswerDialog = true
 //                                        viewModel.answerPrayer(it, "content")
                                     })
@@ -112,13 +111,38 @@ fun DrawPrayerScreen(viewModel: DrawPrayerScreenViewModel) {
                 }
             }
 
-            Button(onClick = {
-                coroutineScope.launch {
-                    viewModel.drawPrayer()
+            Row {
+                Button(onClick = {
+                    coroutineScope.launch {
+                        viewModel.drawPrayer()
+                    }
+                }, enabled = !viewModel.drawableAreEmpty) {
+                    Text(text = "Draw Prayer")
                 }
-            }) {
-                Text(text = "Draw Prayer")
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Button(onClick = {
+                        viewModel.clearDrawnPrayers()
+                    }, enabled = viewModel.drawnPrayers.isNotEmpty() && !viewModel.drawableAreEmpty) {
+                        Text(text = "Clear")
+
+                    }
+
+                if (viewModel.drawableAreEmpty) {
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    //BUG Have to click twice to activate
+                    Button(onClick = {
+                        coroutineScope.launch {
+                            viewModel.reloadUnansweredPrayers()
+                        }
+                    }) {
+                        Text(text = "Reload")
+                    }
+                }
             }
+
         }
 
     }

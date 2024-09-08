@@ -30,4 +30,7 @@ interface PrayerDao {
 
     @Query("SELECT * FROM prayer WHERE dateAnswered IS null")
     fun getUnansweredPrayers(): Flow<List<Prayer>>
+
+    @Query("UPDATE prayer SET drawn=0 WHERE dateAnswered IS NULL")
+    suspend fun reloadUnansweredPrayers()
 }
